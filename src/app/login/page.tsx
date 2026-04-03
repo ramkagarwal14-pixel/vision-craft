@@ -1,14 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import {
-    signInWithEmailAndPassword,
-    createUserWithEmailAndPassword,
-    signInWithPopup,
-    GoogleAuthProvider,
-    sendEmailVerification,
-} from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { supabase } from "@/lib/supabase";
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./Login.module.css";
 import Link from "next/link";
@@ -29,29 +22,31 @@ function LoginForm() {
         setError("");
         setInfo("");
 
-        if (!auth) {
-            setError("Firebase configuration is missing. Set NEXT_PUBLIC_* keys in .env.local.");
-            return;
-        }
-
         setLoading(true);
 
         try {
             if (isLogin) {
-                const cred = await signInWithEmailAndPassword(auth, email, password);
-                if (!cred.user.emailVerified) {
-                    setInfo(
-                        "This email is not verified yet. Check your inbox for the link, or we can resend it from your account page after sign-in."
-                    );
-                }
+                const { error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password,
+                });
+                if (error) throw error;
                 router.push(redirectTo);
             } else {
-                const cred = await createUserWithEmailAndPassword(auth, email, password);
-                await sendEmailVerification(cred.user);
-                setInfo(
-                    "Account created. We sent a verification link to your email — please confirm it before checkout."
-                );
-                router.push(redirectTo);
+                const { error, data } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        emailRedirectTo: `${window.location.origin}/auth/callback`,
+                    }
+                });
+                if (error) throw error;
+
+                if (data?.user && data.user.identities && data.user.identities.length === 0) {
+                    setError("An account with this email already exists.");
+                } else {
+                    setInfo("Success! Please check your email for the confirmation link.");
+                }
             }
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
@@ -62,15 +57,15 @@ function LoginForm() {
     };
 
     const handleGoogleSignIn = async () => {
-        if (!auth) {
-            setError("Firebase configuration is missing. Set NEXT_PUBLIC_* keys in .env.local.");
-            return;
-        }
         setError("");
-        const provider = new GoogleAuthProvider();
         try {
-            await signInWithPopup(auth, provider);
-            router.push(redirectTo);
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: `${window.location.origin}/auth/callback`
+                }
+            });
+            if (error) throw error;
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : "Google Sign-In failed.";
             setError(message);
@@ -84,11 +79,11 @@ function LoginForm() {
                 <p className={styles.subtitle}>
                     {isLogin
                         ? "Sign in to your VisionCraft account to checkout and track orders."
-                        : "Register with email — we’ll send a quick verification link for secure checkout."}
+                        : "Register with email to track orders and save your favorites."}
                 </p>
 
                 {error && <div className={styles.error}>{error}</div>}
-                {info && <div className={styles.info}>{info}</div>}
+                {info && <div className={styles.info} style={{ background: '#d4edda', color: '#155724', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '0.875rem' }}>{info}</div>}
 
                 <button type="button" onClick={handleGoogleSignIn} className={styles.googleBtn}>
                     <svg width="20" height="20" viewBox="0 0 24 24">
@@ -140,7 +135,7 @@ function LoginForm() {
                         />
                     </div>
                     <button type="submit" disabled={loading} className={styles.submitBtn}>
-                        {loading ? "Processing…" : isLogin ? "Sign in" : "Sign up & verify email"}
+                        {loading ? "Processing…" : isLogin ? "Sign in" : "Create Account"}
                     </button>
                 </form>
 
