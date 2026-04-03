@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# development and scratch scripts
+dev.log
+test_*.py
+verify_*.py
+check_*.py
+collect_*.py
+generate_products.py

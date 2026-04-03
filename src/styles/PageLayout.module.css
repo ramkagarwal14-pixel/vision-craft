@@ -1,0 +1,114 @@
+.page {
+    padding-top: var(--header-height);
+    padding-bottom: 8rem;
+}
+
+.hero {
+    padding: 6rem 0;
+    background: var(--surface);
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+}
+
+.hero p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.section {
+    margin-bottom: 4rem;
+}
+
+.section h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.section p {
+    line-height: 1.8;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+}
+
+.section ul {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+}
+
+.section li {
+    list-style: disc;
+    margin-bottom: 0.8rem;
+    color: var(--text-muted);
+}
+
+.contactGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.field label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.field input,
+.field textarea {
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    outline: none;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+.field input:focus,
+.field textarea:focus {
+    border-color: var(--accent);
+}
+
+.faqItem {
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 0;
+}
+
+.faqQuestion {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .contactGrid {
+        grid-template-columns: 1fr;
+    }
+}

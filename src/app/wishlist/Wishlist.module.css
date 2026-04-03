@@ -1,0 +1,77 @@
+.page {
+    padding: 80px 0;
+    min-height: 80vh;
+    background-color: #fcfcfc;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.header h1 {
+    font-family: var(--font-outfit);
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--text-main);
+    letter-spacing: -0.02em;
+}
+
+.header p {
+    font-size: 1rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 20px;
+    background: white;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    text-align: center;
+    gap: 24px;
+}
+
+.emptyIcon {
+    width: 64px;
+    height: 64px;
+    color: var(--border);
+    background: var(--surface);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.empty h2 {
+    font-family: var(--font-outfit);
+    font-size: 1.5rem;
+    color: var(--text-main);
+}
+
+.empty p {
+    color: var(--text-muted);
+    max-width: 320px;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 2.25rem;
+    }
+}
