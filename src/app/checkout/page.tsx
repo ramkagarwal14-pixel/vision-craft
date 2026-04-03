@@ -64,27 +64,7 @@ export default function CheckoutPage() {
         );
     }
 
-    if (!user.emailVerified) {
-        return (
-            <div className={styles.checkoutPage}>
-                <div className={styles.authGate}>
-                    <h1 className={styles.summaryTitle}>Verify your email</h1>
-                    <p className={styles.muted}>
-                        For your security, confirm the verification link we sent to <strong>{user.email}</strong> before
-                        completing a purchase.
-                    </p>
-                    <div className={styles.authActions}>
-                        <button type="button" className="btn btn-primary" onClick={() => refreshUser()}>
-                            I&apos;ve verified — continue
-                        </button>
-                        <Link href="/account" className="btn btn-outline">
-                            Account help
-                        </Link>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+
 
     if (cart.length === 0 && !orderPlaced) {
         return (
