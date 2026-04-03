@@ -2,12 +2,31 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import styles from "./page.module.css";
 import ProductCard from "@/components/ui/ProductCard";
 import { products } from "@/data/products";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Home() {
   const featuredProducts = products.filter(p => p.isBestSeller || p.isNew).slice(0, 4);
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/login");
+    }
+  }, [user, loading, router]);
+
+  if (loading || !user) {
+    return (
+      <div style={{ width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fafafa' }}>
+        <p style={{ fontWeight: 600, color: '#666', fontFamily: 'var(--font-outfit)' }}>Authenticating...</p>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.home}>
@@ -15,7 +34,7 @@ export default function Home() {
       <section className={styles.hero}>
         <div className={styles.heroImage}>
           <Image
-            src="https://images.unsplash.com/photo-1574258495973-f010dfbb5371?q=80&w=2670&auto=format&fit=crop"
+            src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?q=80&w=2670&auto=format&fit=crop"
             alt="VisionCraft Luxury Eyewear"
             fill
             priority
@@ -165,7 +184,7 @@ export default function Home() {
           <div className={styles.categoryGrid}>
             <div className={styles.categoryCard}>
               <div className={styles.categoryImage}>
-                <Image src="https://images.unsplash.com/photo-1509695507497-903c140c43b0?q=80&w=2000&auto=format&fit=crop" alt="Men's" fill />
+                <Image src="https://images.unsplash.com/photo-1577803645773-f96470509666?q=80&w=2000&auto=format&fit=crop" alt="Men's" fill />
               </div>
               <div className={styles.categoryContent}>
                 <h2>For Men</h2>
@@ -174,7 +193,7 @@ export default function Home() {
             </div>
             <div className={styles.categoryCard}>
               <div className={styles.categoryImage}>
-                <Image src="https://images.unsplash.com/photo-1523394643039-a2770cf4a2a0?q=80&w=2000&auto=format&fit=crop" alt="Women's" fill />
+                <Image src="https://images.unsplash.com/photo-1508296695146-257a8bf4fb92?q=80&w=2000&auto=format&fit=crop" alt="Women's" fill />
               </div>
               <div className={styles.categoryContent}>
                 <h2>For Women</h2>
@@ -183,7 +202,7 @@ export default function Home() {
             </div>
             <div className={styles.categoryCard}>
               <div className={styles.categoryImage}>
-                <Image src="https://images.unsplash.com/photo-1576872381149-7847515ce5d8?q=80&w=2000&auto=format&fit=crop" alt="Unisex" fill />
+                <Image src="https://images.unsplash.com/photo-1687092084146-a2893f0b896a?q=80&w=2000&auto=format&fit=crop" alt="Unisex" fill />
               </div>
               <div className={styles.categoryContent}>
                 <h2>Essence</h2>
@@ -228,7 +247,7 @@ export default function Home() {
             </div>
             <div className={styles.vtoPreview}>
               <div className={styles.vtoImageContainer}>
-                <Image src="https://images.unsplash.com/photo-1512353087810-25dfcd100962?q=80&w=2000&auto=format&fit=crop" alt="VTO Preview" fill className={styles.vtoImage} />
+                <Image src="https://images.unsplash.com/photo-1574258495973-f010dfbb5371?q=80&w=2000&auto=format&fit=crop" alt="VTO Preview" fill className={styles.vtoImage} />
               </div>
             </div>
           </div>

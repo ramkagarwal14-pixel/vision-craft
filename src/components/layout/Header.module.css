@@ -102,6 +102,15 @@
     transform: translateX(-50%);
 }
 
+@media (max-width: 768px) {
+    .logo {
+        position: static;
+        transform: none;
+        font-size: 1.25rem;
+        letter-spacing: 0.1em;
+    }
+}
+
 .actions {
     display: flex;
     align-items: center;
@@ -252,6 +261,27 @@
 @media (max-width: 1024px) {
     .nav {
         display: none;
-        /* Hide on mobile for now, will add hamburger later */
+    }
+}
+
+@media (max-width: 768px) {
+    .topBar {
+        display: none;
+    }
+
+    .header {
+        height: 70px;
+    }
+
+    .actions {
+        gap: 1rem;
+    }
+
+    .actionLabel {
+        display: none;
+    }
+
+    .logo {
+        margin-right: auto;
     }
 }
