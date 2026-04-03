@@ -1,13 +1,20 @@
+
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { User } from '@supabase/supabase-js';
-import { supabase } from "@/lib/supabase";
+import {
+    onAuthStateChanged,
+    User,
+    signOut as firebaseSignOut,
+    reload,
+} from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 interface AuthContextType {
     user: User | null;
     loading: boolean;
     logout: () => Promise<void>;
+    /** Call after the user clicks the email verification link so `emailVerified` updates. */
     refreshUser: () => Promise<void>;
 }
 
@@ -23,35 +30,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Get initial session
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setUser(session?.user ?? null);
+        if (!auth) {
+            console.warn("Firebase Auth is not initialized. Check your environment variables.");
+            setLoading(false);
+            return;
+        }
+
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setUser(user);
             setLoading(false);
         });
 
-        // Listen for changes
-        const {
-            data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null);
-            setLoading(false);
-        });
-
-        return () => subscription.unsubscribe();
+        return () => unsubscribe();
     }, []);
 
     const logout = async () => {
         try {
-            await supabase.auth.signOut();
+            await firebaseSignOut(auth);
         } catch (error) {
             console.error("Logout failed", error);
         }
     };
 
     const refreshUser = async () => {
+        if (!auth?.currentUser) return;
         try {
-            const { data: { user } } = await supabase.auth.getUser();
-            setUser(user);
+            await reload(auth.currentUser);
+            setUser(auth.currentUser);
         } catch (e) {
             console.error("refreshUser failed", e);
         }

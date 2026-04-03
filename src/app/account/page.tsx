@@ -3,7 +3,8 @@
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { sendEmailVerification } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 import styles from "./Account.module.css";
 import Link from "next/link";
 
@@ -27,27 +28,15 @@ export default function Account() {
     if (!user) return null;
 
     const resendVerification = async () => {
+        if (!auth?.currentUser) return;
         setVerifyMsg("");
-        if (!user.email) return;
         try {
-            const { error } = await supabase.auth.resend({
-                type: 'signup',
-                email: user.email,
-                options: {
-                    emailRedirectTo: `${window.location.origin}/auth/callback`,
-                }
-            });
-            if (error) throw error;
+            await sendEmailVerification(auth.currentUser);
             setVerifyMsg("Verification email sent. Check your inbox.");
         } catch {
             setVerifyMsg("Could not send email. Try again later.");
         }
     };
-
-    // Note: Supabase doesn't expose emailVerified boolean directly on the session object 
-    // without checking email_confirmed_at. Since Supabase handles access control, we'll
-    // just check if user exists.
-    const isVerified = user.role !== 'authenticated' || user.email;
 
     return (
         <div className={styles.page}>
@@ -70,10 +59,10 @@ export default function Account() {
                             <h1 className={styles.userName}>{user.email?.split('@')[0]}</h1>
                         </div>
 
-                        {!isVerified && (
+                        {!user.emailVerified && (
                             <div className={styles.verifyBanner}>
                                 <p>
-                                    <strong>Verify your email</strong> to unlock full features. We sent a link to{" "}
+                                    <strong>Verify your email</strong> to unlock checkout. We sent a link to{" "}
                                     {user.email}.
                                 </p>
                                 <div className={styles.verifyActions}>
