@@ -43,11 +43,19 @@ export default function TryOn() {
     }, []);
 
     useEffect(() => {
-        navigator.mediaDevices.enumerateDevices().then(d => {
-            const videoDevices = d.filter(device => device.kind === 'videoinput');
-            setDevices(videoDevices);
-            if (videoDevices.length > 0) setSelectedDeviceId(videoDevices[0].deviceId);
-        });
+        const getDevices = async () => {
+            try {
+                if (navigator?.mediaDevices?.enumerateDevices) {
+                    const d = await navigator.mediaDevices.enumerateDevices();
+                    const videoDevices = d.filter(device => device.kind === 'videoinput');
+                    setDevices(videoDevices);
+                    if (videoDevices.length > 0) setSelectedDeviceId(videoDevices[0].deviceId);
+                }
+            } catch (err) {
+                console.error("Device enumeration failed:", err);
+            }
+        };
+        getDevices();
     }, []);
 
     const stopCamera = useCallback(() => {
@@ -67,6 +75,10 @@ export default function TryOn() {
         stopCamera();
 
         try {
+            if (!navigator?.mediaDevices?.getUserMedia) {
+                throw new Error("Your browser does not support camera access or it is disabled.");
+            }
+
             const constraints: MediaStreamConstraints = {
                 video: deviceId ? { deviceId: { exact: deviceId } } : {
                     facingMode: useFront ? 'user' : 'environment'
