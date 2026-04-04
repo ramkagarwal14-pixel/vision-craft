@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import CartDrawer from "@/components/layout/CartDrawer";
+import Chatbot from "@/components/ui/Chatbot";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import { AuthProvider } from "@/context/AuthContext";
@@ -38,6 +39,7 @@ export default function RootLayout({
               <CartDrawer />
               <main>{children}</main>
               <Footer />
+              <Chatbot />
             </WishlistProvider>
           </CartProvider>
         </AuthProvider>
